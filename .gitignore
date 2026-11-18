@@ -1,0 +1,3 @@
+#No se subiran estos archivos al repositorio
+.env
+db.sqlite3
