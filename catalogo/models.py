@@ -1,13 +1,46 @@
 from django.db import models
+from registro.models import Perfil
+from gremios.models import Gremio
+
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=45)
+
+    def __str__(self):
+        return self.nombre
 
 class Actividad(models.Model):
-    titulo = models.CharField('Nombre de la actividad', max_length=150)
-    categoria = models.CharField('Categoría', max_length=50, blank=True)
-    fecha = models.DateField('Fecha')
-    descripcion = models.TextField('Descripción', blank=True)
-    precio = models.IntegerField('Precio', default=0)
-    cupo_maximo = models.IntegerField('Cupo máximo', null=True, blank=True)
-    imagen = models.ImageField(upload_to='static/', null=True, blank=True)
-    
+    gremio = models.ForeignKey(Gremio, on_delete=models.CASCADE)  # organiza
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT)  # clasifica
+    titulo = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=255)
+    fecha = models.DateField()
+    precio = models.PositiveIntegerField(default=0)
+    cupo_maximo = models.PositiveIntegerField(default=0)
+    estado = models.CharField(max_length=20, default='Activa')
+    imagen = models.ImageField(upload_to='actividades', null=True, blank=True)
+
     def __str__(self):
         return self.titulo
+
+class ExperienciaPanorama(models.Model):
+    gremio = models.ForeignKey(Gremio, on_delete=models.CASCADE)  # publica
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT)  # cataloga
+    titulo = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=255)
+    imagen = models.ImageField(upload_to='experiencias', null=True, blank=True)
+    datos_contacto = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.titulo
+
+class Comentario(models.Model):
+    turista = models.ForeignKey(Perfil, on_delete=models.CASCADE)  # escribe
+    experiencia = models.ForeignKey(ExperienciaPanorama, on_delete=models.CASCADE)  # pertenece
+    texto = models.CharField(max_length=255)
+    fecha = models.DateField(auto_now_add=True)
+
+class Valoracion(models.Model):
+    turista = models.ForeignKey(Perfil, on_delete=models.CASCADE)  # otorga
+    experiencia = models.ForeignKey(ExperienciaPanorama, on_delete=models.CASCADE)  # pertenece_exp
+    puntuacion = models.PositiveSmallIntegerField()  # 1 a 5
+    fecha = models.DateField(auto_now_add=True)
