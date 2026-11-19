@@ -1,3 +1,6 @@
 #No se subiran estos archivos al repositorio
 .env
 db.sqlite3
+
+#Aquí se guardan las imágenes que suben los usuarios
+media/

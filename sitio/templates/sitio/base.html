@@ -61,7 +61,11 @@
                     </li>
 
                 </ul>
-                <a class="btn-planifica mt-2 mt-lg-0" href="#">Iniciar sesion</a>
+                {% if user.is_authenticated %}
+                    <a class="btn-planifica mt-2 mt-lg-0" href="{% url 'logout' %}">Cerrar sesión</a>
+                {% else %}
+                    <a class="btn-planifica mt-2 mt-lg-0" href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
 
                 <div class="d-flex align-items-center gap-3 mt-2 mt-lg-0">
 
