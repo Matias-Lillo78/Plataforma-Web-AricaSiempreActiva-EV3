@@ -1,5 +1,7 @@
 {% extends 'sitio/base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
+
 {% block content %}
 <section class="cuenta-seccion">
     <div class="container">
@@ -26,43 +28,15 @@
                 <div class="cuenta-card">
 
                     <h2>Inicia sesión</h2>
-                    <p>Ingresa con tu usuario o correo electrónico.</p>
-
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-danger">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                    <p>Ingresa con tu nombre de usuario.</p>
 
                     <form method="POST">
                         {% csrf_token %}
-
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Nombre de usuario o correo electrónico</label>
-
-                            <input type="text" class="form-control cuenta-input" id="username" name="username" placeholder="Usuario o nombre@correo.cl" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña</label>
-
-                            <input type="password" class="form-control cuenta-input" id="password" name="password" placeholder="Ingresa tu contraseña"required>
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <div class="form-check"><input class="form-check-input" type="checkbox" id="recordarme">
-                                <label class="form-check-label" for="recordarme">Recordarme</label>
-                            </div>
-
-                            <a href="#" class="cuenta-enlace">¿Olvidaste tu contraseña?</a>
-                        </div>
-
-                        <button type="submit" class="btn-cuenta">Iniciar sesión</button> 
+                        {{ form|crispy }}
+                        <button type="submit" class="btn-cuenta mt-3">Iniciar sesión</button>
                     </form>
 
-                    <p class="cuenta-pie">¿No tienes cuenta?<a href="{% url 'registrar' %}">Regístrate</a></p>
+                    <p class="cuenta-pie">¿No tienes cuenta? <a href="{% url 'registrar' %}">Regístrate</a></p>
 
                 </div>
             </div>
