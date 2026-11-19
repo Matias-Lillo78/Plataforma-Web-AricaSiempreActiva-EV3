@@ -9,8 +9,8 @@ class Categoria(models.Model):
         return self.nombre
 
 class Actividad(models.Model):
-    gremio = models.ForeignKey(Gremio, on_delete=models.CASCADE)  # organiza
-    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT)  # clasifica
+    gremio = models.ForeignKey(Gremio, on_delete=models.CASCADE) 
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT) 
     titulo = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=255)
     fecha = models.DateField()
@@ -23,8 +23,8 @@ class Actividad(models.Model):
         return self.titulo
 
 class ExperienciaPanorama(models.Model):
-    gremio = models.ForeignKey(Gremio, on_delete=models.CASCADE)  # publica
-    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT)  # cataloga
+    gremio = models.ForeignKey(Gremio, on_delete=models.CASCADE)  
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT) 
     titulo = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=255)
     imagen = models.ImageField(upload_to='experiencias', null=True, blank=True)
@@ -34,13 +34,13 @@ class ExperienciaPanorama(models.Model):
         return self.titulo
 
 class Comentario(models.Model):
-    turista = models.ForeignKey(Perfil, on_delete=models.CASCADE)  # escribe
-    experiencia = models.ForeignKey(ExperienciaPanorama, on_delete=models.CASCADE)  # pertenece
+    turista = models.ForeignKey(Perfil, on_delete=models.CASCADE)
+    experiencia = models.ForeignKey(ExperienciaPanorama, on_delete=models.CASCADE)  
     texto = models.CharField(max_length=255)
     fecha = models.DateField(auto_now_add=True)
 
 class Valoracion(models.Model):
     turista = models.ForeignKey(Perfil, on_delete=models.CASCADE)  # otorga
-    experiencia = models.ForeignKey(ExperienciaPanorama, on_delete=models.CASCADE)  # pertenece_exp
+    experiencia = models.ForeignKey(ExperienciaPanorama, on_delete=models.CASCADE)  
     puntuacion = models.PositiveSmallIntegerField()  # 1 a 5
     fecha = models.DateField(auto_now_add=True)
