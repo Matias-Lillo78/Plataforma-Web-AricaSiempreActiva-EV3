@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import PerfilForm
 from .models import Perfil
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib import messages
 
 # Create your views here.
@@ -35,5 +35,7 @@ def loginView(request):
     return render(request, 'registro/login.html', {'form':form})
     
 
-
+def cerrar_sesion(request):
+    logout(request)
+    return redirect('home')
 

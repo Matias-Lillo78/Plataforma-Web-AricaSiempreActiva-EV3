@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-def rol_defecto():
+def rol_default():
 
     rol, _ = Rol.objects.get_or_create(nombre='Turista')
     return rol.id
@@ -14,9 +14,10 @@ class Rol(models.Model):
         return self.nombre
 
 class Perfil(models.Model):
-    rol = models.ForeignKey(Rol, on_delete=models.RESTRICT, default=rol_defecto)
-    foto_perfil = models.ImageField(upload_to='perfil', null=True, blank=True)
-
+    rol = models.ForeignKey(Rol, on_delete=models.RESTRICT, default=rol_default)
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.rol.nombre}"
 
 
