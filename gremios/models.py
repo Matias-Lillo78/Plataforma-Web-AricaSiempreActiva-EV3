@@ -31,8 +31,7 @@ class Certificacion(models.Model):
         return f"{self.gremio} - {self.estado_solicitud}"
 
 class HistorialDecision(models.Model):
-    administrador = models.ForeignKey(Administrador, on_delete=models.CASCADE)  # decide
-    # la decision puede ser sobre una certificacion o sobre una actividad
+    administrador = models.ForeignKey(Administrador, on_delete=models.CASCADE)  
     certificacion = models.ForeignKey(Certificacion, on_delete=models.CASCADE, null=True, blank=True)
     actividad = models.ForeignKey('catalogo.Actividad', on_delete=models.CASCADE, null=True, blank=True)
     fecha_cambio = models.DateField(auto_now_add=True)

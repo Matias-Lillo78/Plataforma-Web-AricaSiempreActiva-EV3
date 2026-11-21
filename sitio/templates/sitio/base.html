@@ -57,24 +57,39 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Servicios turísticos</a>
+                        <a class="nav-link" href="{% url 'lista-actividades' %}">Servicios turísticos</a>
                     </li>
 
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'lista-experiencias' %}">Tu opinión</a>
+                    </li>
+
+                    {# links segun el rol del usuario #}
+                    {% if user.perfil.rol.nombre == 'Gremio' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mis-actividades' %}">Mis actividades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mis-experiencias' %}">Mis experiencias</a>
+                    </li>
+                    {% elif user.perfil.rol.nombre == 'Turista' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ver-carrito' %}"><i class="bi bi-cart"></i> Carrito</a>
+                    </li>
+                    {% elif user.perfil.rol.nombre == 'Administrador' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'panel' %}"><i class="bi bi-speedometer2"></i> Panel</a>
+                    </li>
+                    {% endif %}
+
                 </ul>
+
                 {% if user.is_authenticated %}
+                    <span class="me-3">Hola, {{ user.username }}</span>
                     <a class="btn-planifica mt-2 mt-lg-0" href="{% url 'logout' %}">Cerrar sesión</a>
                 {% else %}
                     <a class="btn-planifica mt-2 mt-lg-0" href="{% url 'login' %}">Iniciar sesión</a>
                 {% endif %}
-
-                <div class="d-flex align-items-center gap-3 mt-2 mt-lg-0">
-
-    <div class="d-flex align-items-center gap-3 mt-2 mt-lg-0">
-
-        
-    
-    </div>
-</div>
             </div>
 
         </div>
