@@ -22,7 +22,6 @@
                 <td>${{ item.actividad.precio }}</td>
                 <td>
                     <div class="d-flex justify-content-center align-items-center gap-2">
-                        {# Botón para disminuir: se deshabilita en 1 #}
                         {% if item.cantidad > 1 %}
                             <a href="{% url 'disminuir-carrito' item.id %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-dash"></i></a>
                         {% else %}
@@ -31,7 +30,6 @@
 
                         <span class="px-2 fw-bold">{{ item.cantidad }}</span>
 
-                        {# Botón para aumentar: se deshabilita al llegar a los cupos #}
                         {% if item.cantidad < item.actividad.cupo_maximo %}
                             <a href="{% url 'incrementar-carrito' item.id %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus"></i></a>
                         {% else %}
