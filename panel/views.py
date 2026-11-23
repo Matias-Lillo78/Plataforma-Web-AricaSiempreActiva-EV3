@@ -7,7 +7,7 @@ from gremios.models import Gremio, Certificacion, HistorialDecision
 from catalogo.models import Categoria
 from catalogo.forms import CategoriaForm
 
-# Helper: busca el administrador que inicio sesion (si no es administrador da 404)
+# busca el administrador que inicio sesion (si no es administrador da 404)
 def _admin_del_usuario(request):
     return get_object_or_404(Administrador, perfil__usuario=request.user)
 

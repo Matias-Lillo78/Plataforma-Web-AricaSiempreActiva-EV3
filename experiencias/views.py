@@ -54,7 +54,7 @@ def valorar_experiencia(request, id):
 
 @login_required
 def mis_experiencias(request):
-   
+
     gremio = get_object_or_404(Gremio, perfil__usuario=request.user)
     experiencias = ExperienciaPanorama.objects.filter(gremio=gremio)
     return render(request, 'experiencias/mis_experiencias.html', {'experiencias': experiencias})

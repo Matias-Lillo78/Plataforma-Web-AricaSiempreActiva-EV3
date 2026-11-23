@@ -8,7 +8,6 @@ from .models import Perfil, Rol, Administrador
 
 # Create your views here.
 def registrarView(request):
-    # tipo dice que pestaña se envio: 'turista' o 'gremio'
     tipo = request.POST.get('tipo', 'turista')
     datos = request.POST or None
     turista_form = TuristaForm(datos if tipo == 'turista' else None)
@@ -41,13 +40,11 @@ def loginView(request):
         return redirect('home')
 
     if request.method == 'POST':
-        # iniciando sesion
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             perfil, _ = Perfil.objects.get_or_create(usuario=user)
             if user.is_superuser:
-                # el superusuario (createsuperuser) queda como Administrador del sitio
                 perfil.rol, _ = Rol.objects.get_or_create(nombre='Administrador')
                 perfil.save()
                 Administrador.objects.get_or_create(perfil=perfil, defaults={'nivel_acceso': 'Total'})
