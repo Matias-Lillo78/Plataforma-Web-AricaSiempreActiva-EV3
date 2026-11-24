@@ -708,7 +708,7 @@
 .cuenta-seccion {
     background: #fbf1e6;
     padding: 4rem 0;
-    min-height: 600px;
+    min-height: calc(100vh - 87px);  /* alto de la pantalla menos el menu: no queda franja blanca */
 }
 
 .cuenta-seccion > .container {
@@ -1210,4 +1210,619 @@ main {
 .footer-copy {
     margin-top: 1.25rem;
     padding-top: 0.75rem;
+}
+
+/* ===== Detalle de actividad ===== */
+.detalle-cabecera {
+    padding: 1.5rem 0;
+}
+
+/* en el detalle el titulo es mas chico que en la portada del home */
+.detalle-cabecera .portada-titulo {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin-bottom: 0;
+}
+
+.detalle-cabecera .calendario-etiqueta {
+    margin-bottom: .5rem;
+}
+
+.detalle-volver {
+    display: block;
+    color: #566573;
+    font-weight: 600;
+    margin-bottom: .6rem;
+}
+
+.detalle-gremio {
+    color: #566573;
+    margin: .4rem 0 0;
+}
+
+/* ocupa toda la pantalla: hay que bajar para ver el footer */
+.detalle-cuerpo {
+    min-height: 100vh;
+    padding: 1.5rem 0 4rem;
+}
+
+.detalle-foto {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 30px rgba(4, 24, 42, .15);
+}
+
+.detalle-subtitulo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #04182a;
+    margin: 2rem 0 .8rem;
+}
+
+/* tarjeta de reserva */
+.detalle-card {
+    background: #fff;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(4, 24, 42, .1);
+    border-top: 5px solid #c32d36;
+}
+
+.detalle-card small {
+    display: block;
+    color: #566573;
+}
+
+.detalle-precio {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #c32d36;
+    margin-bottom: 1.2rem;
+}
+
+.detalle-dato {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: .8rem 0;
+    border-top: 1px solid #f4f5f7;
+}
+
+/* iconos del home, pero mas chicos */
+.detalle-dato .acceso-icono {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.3rem;
+}
+
+.detalle-dato strong {
+    color: #04182a;
+}
+
+/* ===== Mis actividades (gremio) ===== */
+.mis-act-item {
+    border-radius: 12px;
+    padding: .8rem;
+    margin-bottom: .5rem;
+    border: 1px solid #eee;
+}
+
+.mis-act-elegida {
+    background: #e8f3f3;
+    border-color: #b9dcdc;
+}
+
+.mis-act-foto {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.mis-act-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-right: .5rem;
+    border-radius: 50%;
+    background: #e3eef5;
+    color: #2a5d7c;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.etiqueta-verde {
+    background: #e6f4ea;
+    color: #1e7e45;
+}
+
+.etiqueta-gris {
+    background: #eceff1;
+    color: #5f6b73;
+}
+
+/* ===== Detalle de experiencia (Tu opinion) ===== */
+.comentario-card {
+    display: flex;
+    gap: .8rem;
+    padding: 1rem;
+    margin-bottom: .7rem;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.comentario-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fbe3dd;
+    color: #c1272d;
+    font-weight: 700;
+}
+
+/* ===== Catalogo de actividades ===== */
+.catalogo-titulo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #04182a;
+    margin: 0;
+}
+
+.catalogo-texto {
+    color: #4a5a68;
+    margin: .4rem 0 0;
+}
+
+.act-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(4, 24, 42, .08);
+}
+
+.act-foto-caja {
+    position: relative;
+}
+
+.act-foto {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+}
+
+/* las categorias van sobre la foto, arriba a la izquierda */
+.act-etiquetas {
+    position: absolute;
+    top: .8rem;
+    left: .8rem;
+}
+
+.act-etiquetas .calendario-etiqueta {
+    margin: 0 .3rem .3rem 0;
+    background: #fff;
+}
+
+.act-cuerpo {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1.2rem;
+}
+
+.act-titulo {
+    font-weight: 700;
+    color: #04182a;
+    margin: .3rem 0;
+}
+
+.act-precio {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #c32d36;
+    margin: 0;
+}
+
+/* ===== Formulario de actividad (crear y editar) ===== */
+.form-act-contenedor {
+    padding: 2.5rem 0 4rem;
+}
+
+/* tarjeta dividida en dos: panel beige + formulario blanco */
+.form-act-marco {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(4, 24, 42, .12);
+}
+
+.form-act-lateral {
+    height: 100%;
+    padding: 2.5rem 2rem;
+    background: #fbf1e6;
+    border-left: 6px solid #c32d36;
+    color: #4a5a68;
+}
+
+.form-act-lateral h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #04182a;
+}
+
+.form-act-etiqueta {
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: .25rem .8rem;
+    border-radius: 999px;
+    background: #c32d36;
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 600;
+}
+
+.form-act-item {
+    display: flex;
+    gap: .8rem;
+    margin-top: 1.4rem;
+}
+
+.form-act-item i {
+    color: #c32d36;
+    font-size: 1.2rem;
+}
+
+.form-act-item strong {
+    color: #04182a;
+}
+
+.form-act-item small {
+    color: #6b7a86;
+}
+
+.form-act {
+    height: 100%;
+    padding: 2.5rem;
+    background: #fff;
+}
+
+/* campos sin caja: solo una linea abajo que se pone roja al escribir */
+.form-act .form-control,
+.form-act .form-select {
+    border: 0;
+    border-bottom: 2px solid #e5e5e5;
+    border-radius: 0;
+    padding: .7rem .2rem;
+}
+
+.form-act .form-control:focus,
+.form-act .form-select:focus {
+    box-shadow: none;
+    border-bottom-color: #c32d36;
+}
+
+/* etiquetas en mayusculas chicas */
+.form-act .form-label {
+    text-transform: uppercase;
+    font-size: .75rem;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #6b7a86;
+}
+
+.form-act .mb-3 {
+    margin-bottom: 1.6rem !important;
+}
+
+/* boton cancelar del mismo tamano que btn-ver */
+.btn-cancelar {
+    border-radius: 999px;
+    padding: .7rem 1.8rem;
+    font-weight: 600;
+}
+
+/* ===== Mis experiencias (gremio) ===== */
+.mis-exp-contenedor {
+    padding: 2.5rem 0 4rem;
+}
+
+.mis-exp-titulo {
+    border-left: 6px solid #c32d36;
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* tarjeta horizontal: foto | contenido | nota */
+.mis-exp-card {
+    display: flex;
+    margin-bottom: 1.5rem;
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 14px 40px rgba(4, 24, 42, .10);
+}
+
+.mis-exp-foto {
+    width: 280px;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.mis-exp-cuerpo {
+    flex-grow: 1;
+    padding: 1.6rem 1.8rem;
+}
+
+.mis-exp-cuerpo h4 {
+    font-weight: 800;
+    color: #04182a;
+}
+
+/* ultimo comentario como cita */
+.mis-exp-cita {
+    margin: 1rem 0;
+    padding: .3rem 0 .3rem 1rem;
+    border-left: 3px solid #f6d3c4;
+    color: #4a5a68;
+    font-style: italic;
+}
+
+.mis-exp-nota {
+    width: 170px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: #fbf1e6;
+    text-align: center;
+}
+
+.mis-exp-circulo {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #c32d36;
+    color: #fff;
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.mis-exp-circulo small {
+    margin-top: .3rem;
+    font-size: .7rem;
+    font-weight: 600;
+}
+
+.mis-exp-gris {
+    background: #d9dee3;
+    color: #4a5a68;
+    font-size: 1rem;
+}
+
+/* en el celular la tarjeta se apila: foto arriba, nota abajo */
+@media (max-width: 768px) {
+    .mis-exp-card {
+        flex-direction: column;
+    }
+
+    .mis-exp-foto {
+        width: 100%;
+        height: 200px;
+    }
+
+    .mis-exp-nota {
+        width: 100%;
+    }
+}
+
+/* nota de cada comentario: estrella + 4/5 (como en la reseña) */
+.comentario-nota {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-weight: 700;
+    color: #04182a;
+}
+
+.comentario-nota img {
+    width: 18px;
+}
+
+/* ===== Carrito ===== */
+.carrito-item {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    background: #fff;
+    border-radius: 18px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 6px 20px rgba(4,24,42,.07);
+}
+
+.carrito-foto {
+    width: 120px;
+    height: 90px;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+.carrito-info {
+    flex-grow: 1;
+}
+
+.carrito-info h5 {
+    font-weight: 700;
+    color: #04182a;
+    margin-bottom: .2rem;
+}
+
+.carrito-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #e5e5e5;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.carrito-stepper a {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #04182a;
+    text-decoration: none;
+}
+
+.carrito-stepper a.disabled {
+    color: #ccc;
+    pointer-events: none;
+}
+
+.carrito-stepper span {
+    min-width: 28px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.carrito-sub {
+    min-width: 110px;
+    text-align: right;
+    font-weight: 800;
+    color: #04182a;
+    font-size: 1.1rem;
+}
+
+.carrito-borrar {
+    color: #c32d36;
+    font-size: 1.2rem;
+}
+
+.carrito-resumen {
+    position: sticky;
+    top: 1.5rem;
+}
+
+.carrito-linea {
+    display: flex;
+    justify-content: space-between;
+    color: #4a5a68;
+    margin-bottom: .5rem;
+}
+
+/* ===== Mis inscripciones ===== */
+.insc-contenedor {
+    padding: 2.5rem 0 4rem;
+}
+
+.insc-titulo {
+    border-left: 6px solid #c32d36;
+    padding-left: 1rem;
+    margin-bottom: 1.8rem;
+}
+
+.insc-dato {
+    background: #fff;
+    border-radius: 18px;
+    padding: 1.2rem 1.4rem;
+    box-shadow: 0 6px 20px rgba(4,24,42,.07);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.insc-dato .ic {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.insc-dato strong {
+    display: block;
+    font-size: 1.5rem;
+    color: #04182a;
+}
+
+.insc-tabla {
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 14px 40px rgba(4,24,42,.10);
+    margin-top: 1.5rem;
+}
+
+.insc-tabla table {
+    margin: 0;
+}
+
+.insc-tabla thead th {
+    background: #fbf1e6;
+    color: #6b7a86;
+    text-transform: uppercase;
+    font-size: .75rem;
+    letter-spacing: .08em;
+    padding: 1rem;
+    border: 0;
+}
+
+.insc-tabla td {
+    padding: .9rem 1rem;
+    vertical-align: middle;
+}
+
+.insc-foto {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-right: .8rem;
+}
+
+.insc-badge {
+    border-radius: 999px;
+    padding: .3rem .8rem;
+    font-size: .78rem;
+    font-weight: 700;
+}
+
+.insc-proxima {
+    background: #e6f4ea;
+    color: #1e7e45;
+}
+
+.insc-realizada {
+    background: #eceff1;
+    color: #5f6b73;
+}
+
+/* en el celular la tarjeta del carrito pasa a varias lineas */
+@media (max-width: 768px) {
+    .carrito-item {
+        flex-wrap: wrap;
+    }
+
+    .carrito-sub {
+        text-align: left;
+    }
 }
