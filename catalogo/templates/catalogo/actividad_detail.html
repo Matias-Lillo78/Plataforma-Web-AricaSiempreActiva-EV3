@@ -1,0 +1,31 @@
+{% extends 'sitio/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="container py-5">
+    <h1>{{ actividad.titulo }}</h1>
+
+    {% if actividad.imagen %}
+        <img src="{{ actividad.imagen.url }}" class="img-fluid rounded mb-3" alt="{{ actividad.titulo }}">
+    {% else %}
+        <img src="{% static 'sitio/img/morro.jpg' %}" class="img-fluid rounded mb-3" alt="Imagen por defecto">
+    {% endif %}
+
+    <p>{{ actividad.descripcion|linebreaks }}</p>
+    <p><strong>Categoría:</strong> {{ actividad.categoria }}</p>
+    <p><strong>Fecha:</strong> {{ actividad.fecha }}</p>
+    <p><strong>Precio:</strong> ${{ actividad.precio }}</p>
+    <p><strong>Cupo máximo:</strong> {{ actividad.cupo_maximo }}</p>
+    <p>
+        <strong>Gremio:</strong> {{ actividad.gremio.nombre_empresa }}
+        {% if actividad.gremio.verificado %}
+            <span class="badge bg-success"><i class="bi bi-patch-check"></i> Verificado</span>
+        {% endif %}
+    </p>
+
+    {% if user.is_authenticated and user.perfil.rol.nombre == 'Turista' and actividad.cupo_maximo > 0 %}
+        <a href="{% url 'agregar-carrito' actividad.id %}" class="btn btn-primary"><i class="bi bi-cart-plus"></i> Agregar al carrito</a>
+    {% endif %}
+    <a href="{% url 'lista-actividades' %}" class="btn btn-light">Volver</a>
+</section>
+{% endblock content %}

@@ -1,0 +1,12 @@
+{% extends 'sitio/base.html' %}
+
+{% block content %}
+<section class="container py-5">
+    <form method="post">
+        {% csrf_token %}
+        <p>¿Está seguro que desea eliminar la actividad <strong>{{ actividad.titulo }}</strong>?</p>
+        <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+        <a href="{% url 'mis-actividades' %}" class="btn btn-light">Volver</a>
+    </form>
+</section>
+{% endblock content %}
