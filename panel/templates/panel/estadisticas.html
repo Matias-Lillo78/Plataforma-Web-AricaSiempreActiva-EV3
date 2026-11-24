@@ -1,0 +1,98 @@
+{% extends 'sitio/base.html' %}
+
+{% block content %}
+<section class="container py-5">
+    <p class="text-uppercase text-muted fw-bold mb-1">Visión global</p>
+    <h1>Estadísticas de la plataforma</h1>
+    <p class="text-muted mb-4">Gremios, solicitudes, inscripciones e ingresos de toda la plataforma.</p>
+
+    <!-- Tarjetas con los totales -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card card-body shadow-sm">
+                <small class="text-muted">Gremios registrados</small>
+                <h2 class="mb-0">{{ total_gremios }}</h2>
+                <small class="text-success">{{ verificados }} verificados</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-body shadow-sm">
+                <small class="text-muted">Actividades publicadas</small>
+                <h2 class="mb-0">{{ total_actividades }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-body shadow-sm">
+                <small class="text-muted">Personas inscritas</small>
+                <h2 class="mb-0 text-primary">{{ personas }}</h2>
+                <small class="text-muted">Valoración promedio: {% if promedio %}{{ promedio|floatformat:1 }} ★{% else %}—{% endif %}</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-body shadow-sm">
+                <small class="text-muted">Ingresos totales</small>
+                <h2 class="mb-0 text-success">${{ ingresos }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Solicitudes por estado -->
+        <div class="col-lg-6">
+            <div class="card card-body shadow-sm h-100">
+                <h4>Solicitudes por estado</h4>
+                {% for estado, cantidad in solicitudes %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between"><span>{{ estado }}</span><strong>{{ cantidad }}</strong></div>
+                        <div class="progress">
+                            <div class="progress-bar {% if estado == 'Aprobada' %}bg-success{% elif estado == 'Rechazada' %}bg-danger{% elif estado == 'Observada' %}bg-warning{% endif %}"
+                                 style="width: {% widthratio cantidad total_solicitudes 100 %}%"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Actividades por categoria -->
+        <div class="col-lg-6">
+            <div class="card card-body shadow-sm h-100">
+                <h4>Actividades por categoría</h4>
+                {% for categoria in categorias %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between"><span>{{ categoria.nombre }}</span><strong>{{ categoria.total }}</strong></div>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" style="width: {% widthratio categoria.total total_actividades 100 %}%"></div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No hay categorías.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Ranking de actividades -->
+        <div class="col-12">
+            <div class="card card-body shadow-sm">
+                <h4>Actividades con más inscritos</h4>
+                <table class="table align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr><th>#</th><th>Actividad</th><th>Gremio</th><th>Personas</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for a in top %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ a.titulo }}</td>
+                                <td>{{ a.gremio }}</td>
+                                <td>{{ a.personas }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="4">Aún no hay inscripciones.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
