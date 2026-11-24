@@ -4,13 +4,11 @@ from django.contrib import messages
 from catalogo.models import Actividad
 from .models import Carrito, ItemCarrito
 
-# Helpers (funciones internas que usan las vistas)
 def _carrito_del_usuario(request):
     carrito, _ = Carrito.objects.get_or_create(usuario=request.user.perfil)
     return carrito
 
 def _item_del_usuario(request, item_id):
-  
     return get_object_or_404(ItemCarrito, id=item_id, carrito__usuario=request.user.perfil)
 
 @login_required
@@ -23,7 +21,6 @@ def ver_carrito(request):
 
 @login_required
 def agregar_carrito(request, id):
-   
     if request.user.perfil.rol.nombre != 'Turista':
         return redirect('lista-actividades')
 
@@ -36,7 +33,6 @@ def agregar_carrito(request, id):
     item, creado = ItemCarrito.objects.get_or_create(carrito=carrito, actividad=actividad)
 
     if not creado:
-     
         if item.cantidad < actividad.cupo_maximo:
             item.cantidad += 1
             item.save()
