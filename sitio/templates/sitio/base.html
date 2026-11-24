@@ -56,15 +56,15 @@
                         </ul>
                     </li>
 
+                    {% if not user.is_authenticated or user.perfil.rol.nombre == 'Turista' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'lista-actividades' %}">Servicios turísticos</a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'lista-experiencias' %}">Tu opinión</a>
                     </li>
+                    {% endif %}
 
-                    {# links segun el rol del usuario #}
                     {% if user.perfil.rol.nombre == 'Gremio' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'mis-actividades' %}">Mis actividades</a>
@@ -72,13 +72,22 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'mis-experiencias' %}">Mis experiencias</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'estadisticas-gremio' %}"><i class="bi bi-bar-chart"></i> Estadísticas</a>
+                    </li>
                     {% elif user.perfil.rol.nombre == 'Turista' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'ver-carrito' %}"><i class="bi bi-cart"></i> Carrito</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mis-inscripciones' %}"><i class="bi bi-clock-history"></i> Mis inscripciones</a>
+                    </li>
                     {% elif user.perfil.rol.nombre == 'Administrador' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'panel' %}"><i class="bi bi-speedometer2"></i> Panel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'estadisticas-admin' %}"><i class="bi bi-bar-chart"></i> Estadísticas</a>
                     </li>
                     {% endif %}
 
@@ -106,22 +115,22 @@
 
             <!-- Logos -->
             <div class="footer-logos">
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="#">
                     <img src="{% static 'sitio/img/logo_turismo.png' %}" alt="Arica Siempre Activa" class="logo-grande">
                 </a>
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="https://transformaturismo.cl/">
                     <img src="{% static 'sitio/img/logo_transforma.png' %}" alt="Transforma Turismo">
                 </a>
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.corfo.gob.cl/sites/cpp/">
                     <img src="{% static 'sitio/img/logo_corfo.png' %}" alt="Corfo">
                 </a>
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="https://gorearicayparinacota.cl/goreayp/site/edic/base/port/inicio.html">
                     <img src="{% static 'sitio/img/logo_gore.png' %}" alt="Gobierno Regional de Arica y Parinacota">
                 </a>
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.facebook.com/corearicayparinacota/">
                     <img src="{% static 'sitio/img/logo_core.png' %}" alt="Consejo Regional">
                 </a>
-                <a href="#" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.worldsurfcitiesnetwork.com/">
                     <img src="{% static 'sitio/img/logo_wsc.png' %}" alt="World Surf Cities Network">
                 </a>
             </div>
@@ -146,9 +155,9 @@
                 <div class="col-12 col-md-4">
                     <h4 class="footer-titulo">SÍGUENOS</h4>
                     <div class="footer-redes">
-                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="#" aria-label="X">
+                        <a href="https://www.instagram.com/aricasiempreactiva/" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.facebook.com/aricasiempreactiva" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://x.com/AricaSiempreAct" aria-label="X">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/></svg>
                         </a>
                     </div>
