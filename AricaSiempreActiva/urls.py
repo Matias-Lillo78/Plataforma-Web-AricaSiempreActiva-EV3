@@ -23,4 +23,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('sitio.urls')),
+    path('cuenta/', include('registro.urls')),
+    path('actividades/', include('catalogo.urls')),
+    path('experiencias/', include('experiencias.urls')),
+    path('carrito/', include('carrito.urls')),
+    path('gremios/', include('gremios.urls')),
+    path('panel/', include('panel.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'registro',
     'crispy_forms',
     'crispy_bootstrap5',
+    'experiencias',
+    'panel',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

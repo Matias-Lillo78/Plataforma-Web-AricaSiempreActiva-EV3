@@ -1,0 +1,119 @@
+{% extends 'sitio/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<section class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Panel de administrador</h1>
+        <a href="{% url 'estadisticas-admin' %}" class="btn btn-primary"><i class="bi bi-bar-chart"></i> Estadísticas</a>
+    </div>
+
+    <!-- Certificaciones pendientes -->
+    <h3>Solicitudes de verificación</h3>
+    <table class="table align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Gremio</th>
+                <th>Fecha solicitud</th>
+                <th>RUT empresa</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in pendientes %}
+            <tr>
+                <td>{{ c.gremio.nombre_empresa }}</td>
+                <td>{{ c.fecha_solicitud }}</td>
+                <td>{{ c.antecedentes }}</td>
+                <td>
+                    <a href="{% url 'revisar-certificacion' c.id %}" class="btn btn-primary btn-sm">Revisar documentos</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No hay solicitudes pendientes.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Gremios -->
+    <h3 class="mt-5">Gremios</h3>
+    <table class="table align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Empresa</th>
+                <th>Usuario</th>
+                <th>Contacto</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for g in gremios %}
+            <tr>
+                <td>{{ g.nombre_empresa }}</td>
+                <td>{{ g.perfil.usuario.username }}</td>
+                <td>{{ g.contacto }}</td>
+                <td>
+                    {% if g.verificado %}
+                        <span class="badge bg-success">Verificado</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Sin verificar</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No hay gremios registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Categorias -->
+    <h3 class="mt-5">Categorías</h3>
+    <ul class="list-group col-md-6 mb-3">
+        {% for categoria in categorias %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ categoria.nombre }} <small class="text-muted">· {{ categoria.total }} actividad(es)</small></span>
+                <form method="post" action="{% url 'eliminar-categoria' categoria.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </form>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No hay categorías.</li>
+        {% endfor %}
+    </ul>
+    <form method="post" action="{% url 'crear-categoria' %}" class="col-md-4">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class="btn btn-primary">Agregar categoría</button>
+    </form>
+
+    <!-- Historial -->
+    <h3 class="mt-5">Últimas decisiones</h3>
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>Fecha</th>
+                <th>Administrador</th>
+                <th>Gremio</th>
+                <th>Cambio</th>
+                <th>Mensaje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in historial %}
+            <tr>
+                <td>{{ h.fecha_cambio }}</td>
+                <td>{{ h.administrador }}</td>
+                <td>{{ h.certificacion.gremio }}</td>
+                <td>{{ h.estado_anterior }} → {{ h.estado_nuevo }}</td>
+                <td>{{ h.observaciones }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">Aún no hay decisiones.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock content %}
