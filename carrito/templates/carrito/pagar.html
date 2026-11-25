@@ -1,0 +1,45 @@
+{% extends 'sitio/base.html' %}
+
+{% block content %}
+<section class="container py-5">
+    <h1 class="mb-4">Completa tu pago</h1>
+    <div class="row g-4">
+
+        <div class="col-lg-7">
+            <div class="card card-body shadow-sm">
+                <h4>Resumen</h4>
+                <table class="table align-middle">
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.actividad.titulo }}<br><small class="text-muted">{{ item.actividad.fecha }} · {{ item.cantidad }} persona(s)</small></td>
+                        <td class="text-end">${{ item.sub_total }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <h4 class="text-end">Total: ${{ total }}</h4>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card card-body shadow-sm">
+                <div class="d-flex align-items-center gap-3 border rounded p-3 mb-3">
+                    <span class="badge bg-danger fs-5">W</span>
+                    <div>
+                        <strong>Webpay Plus</strong><br>
+                        <small class="text-muted">Pasarela de prueba: no se cobra dinero real</small>
+                    </div>
+                </div>
+                <p class="d-flex justify-content-between fs-5"><span>Total a pagar</span><strong>${{ total }}</strong></p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <button name="resultado" value="Aprobado" class="btn btn-success w-100 mb-2"><i class="bi bi-check-lg"></i> Simular pago aprobado</button>
+                    <button name="resultado" value="Rechazado" class="btn btn-outline-danger w-100">Simular pago rechazado</button>
+                </form>
+                <small class="text-muted mt-3">La inscripción solo se confirma cuando el pago es aprobado.</small>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock content %}
