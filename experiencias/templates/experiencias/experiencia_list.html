@@ -2,28 +2,61 @@
 {% load static %}
 
 {% block content %}
-<section class="container py-5">
-    <h1 class="mb-4">Opina sobre tus experiencias</h1>
 
-    <div class="d-flex flex-wrap justify-content-center">
-        {% for experiencia in experiencias %}
-        <div class="card m-2 shadow-sm" style="width: 18rem;">
-            {% if experiencia.imagen %}
-                <img src="{{ experiencia.imagen.url }}" class="card-img-top format-img" alt="{{ experiencia.titulo }}">
-            {% else %}
-                <img src="{% static 'sitio/img/morro.jpg' %}" class="card-img-top format-img" alt="Imagen por defecto">
-            {% endif %}
+<section class="portada detalle-cabecera">
+    <div class="container">
+        <span class="calendario-etiqueta">Tu opinión</span>
+        <h1 class="catalogo-titulo">Opina sobre tus experiencias</h1>
+        <p class="catalogo-texto">Lee lo que dicen otros turistas y cuenta cómo te fue en las actividades donde participaste.</p>
+    </div>
+</section>
 
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ experiencia.titulo }}</h5>
-                <p class="mb-1"><strong>Categoría:</strong> {{ experiencia.categoria }}</p>
-                <p>{{ experiencia.descripcion|truncatewords:15 }}</p>
-                <a href="{% url 'detalle-experiencia' experiencia.id %}" class="btn btn-outline-primary w-100 mt-auto">Ver, comentar y valorar</a>
+<section class="detalle-cuerpo">
+    <div class="container">
+        <div class="row g-4">
+            {% for experiencia in experiencias %}
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <div class="act-card">
+                    
+                    <div class="act-foto-caja">
+                        {% if experiencia.imagen %}
+                            <img src="{{ experiencia.imagen.url }}" class="act-foto" alt="{{ experiencia.titulo }}">
+                        {% else %}
+                            <img src="{% static 'sitio/img/morro.jpg' %}" class="act-foto" alt="Imagen por defecto">
+                        {% endif %}
+                        <div class="act-etiquetas">
+                            {% for c in experiencia.categorias.all %}
+                                <span class="calendario-etiqueta">{{ c }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="act-cuerpo">
+                        <small class="text-muted"><i class="bi bi-shop"></i> {{ experiencia.gremio.nombre_empresa }}</small>
+                        <h5 class="act-titulo">{{ experiencia.titulo }}</h5>
+                        <p class="small text-muted mb-3">{{ experiencia.descripcion|truncatewords:15 }}</p>
+
+                       
+                        <div class="d-flex justify-content-between align-items-end mt-auto mb-3">
+                            <div>
+                                <small class="text-muted">Valoración</small>
+                                {% if experiencia.promedio %}
+                                    <p class="act-precio">★ {{ experiencia.promedio|floatformat:1 }}</p>
+                                {% else %}
+                                    <p class="act-precio text-muted fs-6">Sin valoraciones</p>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted"><i class="bi bi-chat-dots"></i> {{ experiencia.comentario_set.count }} comentarios</small>
+                        </div>
+
+                        <a href="{% url 'detalle-experiencia' experiencia.id %}" class="btn btn-ver w-100">Ver, comentar y valorar</a>
+                    </div>
+                </div>
             </div>
+            {% empty %}
+                <p class="text-muted">Aún no hay experiencias.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <h2>No hay experiencias</h2>
-        {% endfor %}
     </div>
 </section>
 {% endblock content %}

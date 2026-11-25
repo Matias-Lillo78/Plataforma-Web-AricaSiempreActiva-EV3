@@ -1,41 +1,56 @@
 {% extends 'sitio/base.html' %}
+{% load static %}
 
 {% block content %}
-<section class="container py-5">
-    <h1>Mis experiencias</h1>
-    <p class="text-muted">Cada actividad que publicas aparece aquí automáticamente. Revisa lo que opinan los turistas.</p>
+<section class="mis-exp-contenedor">
+    <div class="container">
+        
+        <div class="mis-exp-titulo">
+            <h1 class="catalogo-titulo">Mis experiencias</h1>
+            <p class="catalogo-texto mb-0">Así califican los turistas tus actividades.</p>
+        </div>
 
-    <table class="table align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Título</th>
-                <th>Categoría</th>
-                <th>Valoración</th>
-                <th>Comentarios</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for experiencia in experiencias %}
-            <tr>
-                <td>{{ experiencia.titulo }}</td>
-                <td>{{ experiencia.categoria }}</td>
-                <td>
-                    {% if experiencia.promedio %}
-                        ★ {{ experiencia.promedio|floatformat:1 }}
+        {% for experiencia in experiencias %}
+        <div class="mis-exp-card">
+            
+            {% if experiencia.imagen %}
+                <img src="{{ experiencia.imagen.url }}" class="mis-exp-foto" alt="{{ experiencia.titulo }}">
+            {% else %}
+                <img src="{% static 'sitio/img/morro.jpg' %}" class="mis-exp-foto" alt="Imagen por defecto">
+            {% endif %}
+
+            
+            <div class="mis-exp-cuerpo">
+                {% for c in experiencia.categorias.all %}
+                    <span class="calendario-etiqueta me-1 mb-2">{{ c }}</span>
+                {% endfor %}
+                <h4>{{ experiencia.titulo }}</h4>
+                <small class="text-muted"><i class="bi bi-chat-dots"></i> {{ experiencia.comentario_set.count }} opiniones</small>
+
+                {% with ultimo=experiencia.comentario_set.last %}
+                    {% if ultimo %}
+                        <div class="mis-exp-cita">"{{ ultimo.texto|truncatewords:20 }}"<br><small>— {{ ultimo.turista.usuario.username }}, {{ ultimo.fecha }}</small></div>
                     {% else %}
-                        Sin valoraciones
+                        <div class="mis-exp-cita">Todavía no hay comentarios.</div>
                     {% endif %}
-                </td>
-                <td>{{ experiencia.comentario_set.count }}</td>
-                <td>
-                    <a href="{% url 'detalle-experiencia' experiencia.id %}" class="btn btn-info btn-sm">Ver opiniones</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5">Aún no tienes experiencias. Publica una actividad en <a href="{% url 'mis-actividades' %}">Mis actividades</a>.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% endwith %}
+
+                <a href="{% url 'detalle-experiencia' experiencia.id %}" class="btn btn-ver">Ver todas las opiniones</a>
+            </div>
+
+            
+            <div class="mis-exp-nota">
+                {% if experiencia.promedio %}
+                    <div class="mis-exp-circulo">{{ experiencia.promedio|floatformat:1 }}<small>de 5 ★</small></div>
+                {% else %}
+                    <div class="mis-exp-circulo mis-exp-gris">—<small>sin nota</small></div>
+                {% endif %}
+                <small class="text-muted mt-2">Valoración promedio</small>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-muted">Aún no tienes experiencias. Publica una actividad en <a href="{% url 'mis-actividades' %}">Mis actividades</a>.</p>
+        {% endfor %}
+    </div>
 </section>
 {% endblock content %}
