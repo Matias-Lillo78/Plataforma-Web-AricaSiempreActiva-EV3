@@ -2,45 +2,66 @@
 {% load static %}
 
 {% block content %}
-<section class="container py-5">
-    <h1 class="mb-4">Catálogo de actividades</h1>
+<section class="portada detalle-cabecera">
+    <div class="container">
+        <span class="calendario-etiqueta">Servicios turísticos</span>
+        <h1 class="catalogo-titulo">Catálogo de actividades</h1>
+        <p class="catalogo-texto">Elige tu próxima experiencia en Arica y Parinacota. Todas las publica un gremio verificado.</p>
+    </div>
+</section>
 
-    <div class="d-flex flex-wrap justify-content-center">
-        {% for actividad in actividades %}
-        <div class="card m-2 shadow-sm" style="width: 18rem;">
-            {% if actividad.imagen %}
-                <img src="{{ actividad.imagen.url }}" class="card-img-top format-img" alt="{{ actividad.titulo }}">
-            {% else %}
-                <img src="{% static 'sitio/img/morro.jpg' %}" class="card-img-top format-img" alt="Imagen por defecto">
-            {% endif %}
-
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ actividad.titulo }}</h5>
-                <p class="mb-1"><strong>Categoría:</strong> {{ actividad.categoria }}</p>
-                <p class="mb-1"><strong>Fecha:</strong> {{ actividad.fecha }}</p>
-                <p class="mb-1"><strong>Precio:</strong> ${{ actividad.precio }}</p>
-                <p>
-                    <strong>Gremio:</strong> {{ actividad.gremio.nombre_empresa }}
-                    {% if actividad.gremio.verificado %}
-                        <span class="badge bg-success"><i class="bi bi-patch-check"></i> Verificado</span>
-                    {% endif %}
-                </p>
-
-                <div class="mt-auto">
-                    <a href="{% url 'detalle-actividad' actividad.id %}" class="btn btn-outline-primary w-100 mb-2">Ver detalle</a>
-                    {% if user.is_authenticated and user.perfil.rol.nombre == 'Turista' %}
-                        {% if actividad.cupo_maximo > 0 %}
-                            <a href="{% url 'agregar-carrito' actividad.id %}" class="btn btn-primary w-100"><i class="bi bi-cart-plus"></i> Agregar al carrito</a>
+<section class="detalle-cuerpo">
+    <div class="container">
+        <div class="row g-4">
+            {% for actividad in actividades %}
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <div class="act-card">
+                    <div class="act-foto-caja">
+                        {% if actividad.imagen %}
+                            <img src="{{ actividad.imagen.url }}" class="act-foto" alt="{{ actividad.titulo }}">
                         {% else %}
-                            <button class="btn btn-secondary w-100" disabled>Sin cupos</button>
+                            <img src="{% static 'sitio/img/morro.jpg' %}" class="act-foto" alt="Imagen por defecto">
                         {% endif %}
-                    {% endif %}
+                        <div class="act-etiquetas">
+                            {% for c in actividad.categorias.all %}
+                                <span class="calendario-etiqueta">{{ c }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="act-cuerpo">
+                        <small class="text-muted"><i class="bi bi-calendar-event"></i> {{ actividad.fecha }}</small>
+                        <h5 class="act-titulo">{{ actividad.titulo }}</h5>
+                        <p class="small text-muted mb-3">
+                            <i class="bi bi-shop"></i> {{ actividad.gremio.nombre_empresa }}
+                            {% if actividad.gremio.verificado %}
+                                <i class="bi bi-patch-check-fill text-success" title="Gremio verificado"></i>
+                            {% endif %}
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-end mt-auto mb-3">
+                            <div>
+                                <small class="text-muted">Precio por persona</small>
+                                <p class="act-precio">{% if actividad.precio %}${{ actividad.precio }}{% else %}Gratis{% endif %}</p>
+                            </div>
+                            <small class="text-muted"><i class="bi bi-people-fill"></i> {{ actividad.cupo_maximo }} cupos</small>
+                        </div>
+
+                        <a href="{% url 'detalle-actividad' actividad.id %}" class="btn btn-ver w-100">Ver detalle</a>
+                        {% if user.is_authenticated and user.perfil.rol.nombre == 'Turista' %}
+                            {% if actividad.cupo_maximo > 0 %}
+                                <a href="{% url 'agregar-carrito' actividad.id %}" class="btn btn-outline-danger rounded-pill w-100 mt-2"><i class="bi bi-cart-plus"></i> Agregar al carrito</a>
+                            {% else %}
+                                <button class="btn btn-secondary rounded-pill w-100 mt-2" disabled>Sin cupos</button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+            {% empty %}
+                <p class="text-muted">Aún no hay actividades publicadas.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <h2>No hay actividades</h2>
-        {% endfor %}
     </div>
 </section>
 {% endblock content %}
