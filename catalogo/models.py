@@ -10,7 +10,7 @@ class Categoria(models.Model):
 
 class Actividad(models.Model):
     gremio = models.ForeignKey(Gremio, on_delete=models.CASCADE)  
-    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT)  
+    categorias = models.ManyToManyField(Categoria)   
     titulo = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=255)
     fecha = models.DateField()

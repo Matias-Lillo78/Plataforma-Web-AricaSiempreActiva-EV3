@@ -2,14 +2,60 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<section class="container py-5 col-md-6">
-    <h1>{{ accion }} actividad</h1>
+<section class="form-act-contenedor">
+    <div class="container">
+        <a href="{% url 'mis-actividades' %}" class="detalle-volver mb-3 d-inline-block"><i class="bi bi-arrow-left"></i> Mis actividades</a>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button class="btn btn-primary" type="submit">{{ accion }}</button>
-        <a href="{% url 'mis-actividades' %}" class="btn btn-light">Volver</a>
-    </form>
+        <div class="row g-0 form-act-marco">
+            <div class="col-lg-4">
+                <div class="form-act-lateral">
+                    <span class="form-act-etiqueta">Gremio verificado</span>
+                    <h1>{{ accion }} actividad</h1>
+                    <p>Completa los datos y tu actividad aparecerá en el catálogo para los turistas.</p>
+
+                    <div class="form-act-item">
+                        <i class="bi bi-pencil-square"></i>
+                        <div><strong>Título y descripción</strong><br><small>Qué se hace, dónde y qué llevar.</small></div>
+                    </div>
+                    <div class="form-act-item">
+                        <i class="bi bi-tags"></i>
+                        <div><strong>Categorías</strong><br><small>Puedes elegir varias con Ctrl.</small></div>
+                    </div>
+                    <div class="form-act-item">
+                        <i class="bi bi-cash-coin"></i>
+                        <div><strong>Precio</strong><br><small>Si es $0, se muestra como Gratis.</small></div>
+                    </div>
+                    <div class="form-act-item">
+                        <i class="bi bi-image"></i>
+                        <div><strong>Foto</strong><br><small>Horizontal y luminosa.</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <form method="post" enctype="multipart/form-data" class="form-act">
+                    {% csrf_token %}
+                    {{ form.titulo|as_crispy_field }}
+                    {{ form.descripcion|as_crispy_field }}
+
+                    <div class="row g-4">
+                        <div class="col-md-6">{{ form.categorias|as_crispy_field }}</div>
+                        <div class="col-md-6">{{ form.imagen|as_crispy_field }}</div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-4">{{ form.fecha|as_crispy_field }}</div>
+                        <div class="col-md-4">{{ form.precio|as_crispy_field }}</div>
+                        <div class="col-md-4">{{ form.cupo_maximo|as_crispy_field }}</div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-2">
+                        <a href="{% url 'mis-actividades' %}" class="btn btn-light btn-cancelar">Cancelar</a>
+                        <button class="btn btn-ver" type="submit">{{ accion }} actividad</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </section>
 {% endblock content %}
