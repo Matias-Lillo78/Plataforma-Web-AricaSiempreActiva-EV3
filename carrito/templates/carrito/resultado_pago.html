@@ -1,0 +1,31 @@
+{% extends 'sitio/base.html' %}
+
+{% block content %}
+<section class="container py-5" style="max-width: 640px;">
+    <div class="card card-body shadow-sm text-center p-5">
+        {% if aprobado %}
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 3.5rem;"></i>
+            <p class="text-success fw-bold mt-2 mb-1">INSCRIPCIÓN CONFIRMADA</p>
+            <h2>¡Pago aprobado!</h2>
+            <p>Tu cupo quedó reservado en:</p>
+            <ul class="list-group mb-3 text-start">
+                {% for item in items %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        {{ item.actividad.titulo }} ({{ item.cantidad }} persona/s) <span>${{ item.sub_total }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+            <p class="mb-1">Total pagado: <strong>${{ total }}</strong></p>
+            <p>Código de transacción: <strong>{{ codigo }}</strong></p>
+            <a href="{% url 'mis-inscripciones' %}" class="btn btn-primary">Ver mis inscripciones</a>
+        {% else %}
+            <i class="bi bi-x-circle-fill text-danger" style="font-size: 3.5rem;"></i>
+            <p class="text-danger fw-bold mt-2 mb-1">PAGO NO COMPLETADO</p>
+            <h2>No pudimos procesar tu pago</h2>
+            <p>No se realizó ningún cargo. Tus actividades siguen en el carrito.</p>
+            <a href="{% url 'pagar' %}" class="btn btn-primary">Reintentar pago</a>
+            <a href="{% url 'ver-carrito' %}" class="btn btn-outline-secondary mt-2">Volver al carrito</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock content %}

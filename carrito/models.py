@@ -24,6 +24,7 @@ class ItemCarrito(models.Model):
 class Inscripcion(models.Model):
     turista = models.ForeignKey(Perfil, on_delete=models.CASCADE)  
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE) 
+    cantidad = models.PositiveIntegerField(default=1) 
     fecha = models.DateField(auto_now_add=True)
     estado = models.CharField(max_length=20, default='Pendiente')
 
