@@ -3,62 +3,92 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<section class="container py-5">
-    <h1>{{ experiencia.titulo }}</h1>
 
-    {% if experiencia.imagen %}
-        <img src="{{ experiencia.imagen.url }}" class="img-fluid rounded mb-3" alt="{{ experiencia.titulo }}">
-    {% else %}
-        <img src="{% static 'sitio/img/morro.jpg' %}" class="img-fluid rounded mb-3" alt="Imagen por defecto">
-    {% endif %}
-
-    <p>{{ experiencia.descripcion }}</p>
-    <p><strong>Categoría:</strong> {{ experiencia.categoria }}</p>
-    <p><strong>Contacto:</strong> {{ experiencia.datos_contacto }}</p>
-
-    <h4 class="mt-4">
-        {% if experiencia.promedio %}
-            ★ {{ experiencia.promedio|floatformat:1 }} de 5
-            <small class="text-muted">({{ experiencia.valoracion_set.count }} valoraciones)</small>
+<section class="portada detalle-cabecera">
+    <div class="container">
+        {% if user.perfil.rol.nombre == 'Gremio' %}
+            <a href="{% url 'mis-experiencias' %}" class="detalle-volver"><i class="bi bi-arrow-left"></i> Mis experiencias</a>
         {% else %}
-            Aún no tiene valoraciones
+            <a href="{% url 'lista-experiencias' %}" class="detalle-volver"><i class="bi bi-arrow-left"></i> Tu opinión</a>
         {% endif %}
-    </h4>
+        {% for c in experiencia.categorias.all %}
+            <span class="calendario-etiqueta">{{ c }}</span>
+        {% endfor %}
+        <h1 class="portada-titulo">{{ experiencia.titulo }}</h1>
+        <p class="detalle-gremio"><i class="bi bi-shop"></i> Organiza <strong>{{ experiencia.gremio.nombre_empresa }}</strong></p>
+    </div>
+</section>
 
-    
-    {% if user.perfil.rol.nombre == 'Turista' %}
-        <div class="row mt-3">
-            <div class="col-md-4">
-                <form method="post" action="{% url 'valorar-experiencia' experiencia.id %}">
-                    {% csrf_token %}
-                    {{ valoracion_form|crispy }}
-                    <button class="btn btn-warning">Valorar</button>
-                </form>
+<section class="detalle-cuerpo">
+    <div class="container">
+        <div class="row g-4 g-lg-5">
+
+            
+            <div class="col-lg-7">
+                {% if experiencia.imagen %}
+                    <img src="{{ experiencia.imagen.url }}" class="detalle-foto" alt="{{ experiencia.titulo }}">
+                {% else %}
+                    <img src="{% static 'sitio/img/morro.jpg' %}" class="detalle-foto" alt="Imagen por defecto">
+                {% endif %}
+
+                <h2 class="detalle-subtitulo">Sobre la experiencia</h2>
+                <p class="portada-texto">{{ experiencia.descripcion }}</p>
+
+                <h2 class="detalle-subtitulo">Comentarios ({{ comentarios|length }})</h2>
+                {% for comentario in comentarios %}
+                    <div class="comentario-card">
+                        <span class="comentario-avatar">{{ comentario.turista.usuario.username|first|upper }}</span>
+                        <div>
+                            <strong>{{ comentario.turista.usuario.username }}</strong>
+                            <small class="text-muted">· {{ comentario.fecha }}</small>
+                            <p class="mb-1">{{ comentario.texto }}</p>
+                            
+                            <span class="comentario-nota"><img src="{% static 'sitio/img/blackstar.svg' %}" alt="Estrella"> {{ comentario.valoracion }}/5</span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Aún no hay comentarios.</p>
+                {% endfor %}
             </div>
-            <div class="col-md-8">
-                <form method="post" action="{% url 'comentar-experiencia' experiencia.id %}">
-                    {% csrf_token %}
-                    {{ comentario_form|crispy }}
-                    <button class="btn btn-primary">Comentar</button>
-                </form>
+
+            
+            <div class="col-lg-5">
+                <div class="detalle-card">
+                    <small>Valoración de los turistas</small>
+                    {% if experiencia.promedio %}
+                        <p class="detalle-precio mb-0">★ {{ experiencia.promedio|floatformat:1 }}</p>
+                        <p class="text-muted small">de 5 · {{ experiencia.comentario_set.count }} valoraciones</p>
+                    {% else %}
+                        <p class="detalle-precio fs-4">Aún sin valoraciones</p>
+                    {% endif %}
+
+                    <div class="detalle-dato">
+                        <span class="acceso-icono icono-azul"><i class="bi bi-telephone-fill"></i></span>
+                        <div><small>Contacto</small><strong>{{ experiencia.datos_contacto|default:"Sin contacto" }}</strong></div>
+                    </div>
+                    <div class="detalle-dato">
+                        <span class="acceso-icono icono-amarillo"><i class="bi bi-compass-fill"></i></span>
+                        <div><small>Categorías</small><strong>{{ experiencia.categorias.all|join:", "|default:"Sin categoría" }}</strong></div>
+                    </div>
+
+                    {% if inscrito %}
+                        
+                        <form method="post" action="{% url 'comentar-experiencia' experiencia.id %}" class="mt-3">
+                            {% csrf_token %}
+                            {{ comentario_form|crispy }}
+                            <button class="btn btn-ver w-100">Publicar opinión</button>
+                        </form>
+                    {% elif user.perfil.rol.nombre == 'Turista' %}
+                        <p class="text-muted small mt-3 mb-0">Solo los turistas inscritos en esta actividad pueden comentar y valorar.</p>
+                    {% elif user.perfil.rol.nombre == 'Gremio' %}
+                        <p class="text-muted small mt-3 mb-0"><i class="bi bi-eye"></i> Así ven los turistas tu experiencia. Solo ellos pueden comentar y valorar.</p>
+                    {% elif not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn btn-ver w-100 mt-3">Inicia sesión para opinar</a>
+                    {% endif %}
+                </div>
             </div>
+
         </div>
-    {% elif not user.is_authenticated %}
-        <p class="mt-3"><a href="{% url 'login' %}">Inicia sesión</a> como turista para comentar y valorar.</p>
-    {% endif %}
-
-
-    <h4 class="mt-5">Comentarios</h4>
-    {% for comentario in comentarios %}
-        <div class="border rounded p-3 mb-2">
-            <strong>{{ comentario.turista.usuario.username }}</strong>
-            <small class="text-muted">· {{ comentario.fecha }}</small>
-            <p class="mb-0">{{ comentario.texto }}</p>
-        </div>
-    {% empty %}
-        <p>Aún no hay comentarios.</p>
-    {% endfor %}
-
-    <a href="{% url 'lista-experiencias' %}" class="btn btn-light mt-3">Volver</a>
+    </div>
 </section>
 {% endblock content %}

@@ -1,0 +1,45 @@
+{% extends 'sitio/base.html' %}
+
+{% block content %}
+<section class="container py-5" style="max-width: 720px;">
+    <h1 class="mb-2">Solicitud de verificación</h1>
+    <p class="text-muted">Adjunta los documentos que respalden tu actividad (por ejemplo: certificado de vigencia, patente, póliza, permisos).
+        Solo PDF de hasta 2 MB cada uno, máximo {{ maximo }} documentos. Si tu documento es un escaneo y pesa más, comprímelo antes de subirlo.</p>
+
+    {% if certificacion %}
+    <div class="alert alert-warning">
+        <strong>El administrador pidió revisar tus documentos:</strong><br>
+        {{ certificacion.mensaje_admin }}
+    </div>
+
+   
+    <h5>Documentos enviados</h5>
+    <ul class="list-group mb-4">
+        {% for d in certificacion.documentos.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ d.archivo.url }}" target="_blank"><i class="bi bi-file-earmark-pdf"></i> {{ d.nombre }}</a>
+                <form method="post" action="{% url 'eliminar-documento' d.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Quitar</button>
+                </form>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No quedan documentos.</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="card card-body shadow-sm">
+        {% csrf_token %}
+        <label for="antecedentes" class="form-label">RUT de la empresa</label>
+        <input type="text" name="antecedentes" id="antecedentes" class="form-control mb-3" maxlength="12" placeholder="76.123.456-7" required value="{{ certificacion.antecedentes|default:'' }}">
+
+        <label for="documentos" class="form-label">{% if certificacion %}Agregar documentos{% else %}Documentos{% endif %}</label>
+        
+        <input type="file" name="documentos" id="documentos" class="form-control mb-1" accept=".pdf" multiple>
+        <small class="text-muted mb-3">Puedes seleccionar varios archivos a la vez manteniendo presionada la tecla Ctrl.</small>
+
+        <button class="btn btn-primary">Enviar solicitud</button>
+    </form>
+</section>
+{% endblock content %}

@@ -5,3 +5,4 @@ admin.site.register(Carrito)
 admin.site.register(ItemCarrito)
 admin.site.register(Inscripcion)
 admin.site.register(Pago)
+

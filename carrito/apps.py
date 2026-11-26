@@ -1,7 +1,5 @@
-from django.contrib import admin
-from .models import Carrito, ItemCarrito, Inscripcion, Pago
+from django.apps import AppConfig
 
-admin.site.register(Carrito)
-admin.site.register(ItemCarrito)
-admin.site.register(Inscripcion)
-admin.site.register(Pago)
+
+class CarritoConfig(AppConfig):
+    name = 'carrito'
