@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 from gremios.models import Gremio
 from experiencias.models import ExperienciaPanorama
 from .models import Actividad
@@ -10,20 +11,26 @@ def _gremio_del_usuario(request):
     return get_object_or_404(Gremio, perfil__usuario=request.user)
 
 def _copiar_a_experiencia(actividad):
-    ExperienciaPanorama.objects.update_or_create(
+    experiencia, _ = ExperienciaPanorama.objects.update_or_create(
         actividad=actividad,
         defaults={
             'gremio': actividad.gremio,
-            'categoria': actividad.categoria,
             'titulo': actividad.titulo,
             'descripcion': actividad.descripcion,
             'imagen': actividad.imagen,
             'datos_contacto': actividad.gremio.contacto,
         },
     )
-
+    experiencia.categorias.set(actividad.categorias.all())  
 
 def lista_actividades(request):
+   
+    if request.user.is_authenticated and hasattr(request.user, 'perfil'):
+        if request.user.perfil.rol.nombre == 'Gremio':
+            return redirect('mis-actividades')
+        if request.user.perfil.rol.nombre == 'Administrador':
+            return redirect('panel')
+
     actividades = Actividad.objects.filter(estado='Activa')
     return render(request, 'catalogo/actividad_list.html', {'actividades': actividades})
 
@@ -35,9 +42,31 @@ def detalle_actividad(request, id):
 @login_required
 def mis_actividades(request):
     gremio = _gremio_del_usuario(request)
-    actividades = Actividad.objects.filter(gremio=gremio)
-    pendiente = gremio.certificacion_set.filter(estado_solicitud='Pendiente').exists()
-    return render(request, 'catalogo/mis_actividades.html', {'actividades': actividades, 'gremio': gremio, 'pendiente': pendiente})
+    actividades = Actividad.objects.filter(gremio=gremio).annotate(inscritos=Sum('inscripcion__cantidad'))
+    certificacion = gremio.certificacion_set.last()  
+
+    
+    id = request.GET.get('actividad')
+    if id:
+        elegida = get_object_or_404(actividades, pk=id)  # solo actividades de este gremio
+    else:
+        elegida = actividades.first()
+
+    participantes = []
+    recaudado = 0
+    if elegida:
+        participantes = elegida.inscripcion_set.all().order_by('-id')
+        for inscripcion in participantes:
+            recaudado += inscripcion.pago.monto
+
+    return render(request, 'catalogo/mis_actividades.html', {
+        'actividades': actividades,
+        'gremio': gremio,
+        'certificacion': certificacion,
+        'elegida': elegida,
+        'participantes': participantes,
+        'recaudado': recaudado,
+    })
 
 @login_required
 def crear_actividad(request):
@@ -52,6 +81,7 @@ def crear_actividad(request):
             actividad = form.save(commit=False)
             actividad.gremio = gremio 
             actividad.save()
+            actividad.categorias.set(form.cleaned_data['categorias'])
             _copiar_a_experiencia(actividad)  
             messages.success(request, 'Actividad creada')
             return redirect('mis-actividades')

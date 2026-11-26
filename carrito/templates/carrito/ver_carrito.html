@@ -1,58 +1,56 @@
 {% extends 'sitio/base.html' %}
-
+{% load static %}
 {% block content %}
-<section class="container py-5">
-    <h1>Tu carrito</h1>
-
-    {% if items %}
-    <table class="table align-middle text-center">
-        <thead class="table-dark">
-            <tr>
-                <th>Actividad</th>
-                <th>Precio</th>
-                <th>Personas</th>
-                <th>Subtotal</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.actividad.titulo }}</td>
-                <td>${{ item.actividad.precio }}</td>
-                <td>
-                    <div class="d-flex justify-content-center align-items-center gap-2">
-                        {% if item.cantidad > 1 %}
-                            <a href="{% url 'disminuir-carrito' item.id %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-dash"></i></a>
-                        {% else %}
-                            <a class="btn btn-outline-secondary btn-sm disabled"><i class="bi bi-dash"></i></a>
-                        {% endif %}
-
-                        <span class="px-2 fw-bold">{{ item.cantidad }}</span>
-
-                        {% if item.cantidad < item.actividad.cupo_maximo %}
-                            <a href="{% url 'incrementar-carrito' item.id %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus"></i></a>
-                        {% else %}
-                            <a class="btn btn-outline-secondary btn-sm disabled"><i class="bi bi-plus"></i></a>
-                        {% endif %}
-                    </div>
-                </td>
-                <td>${{ item.sub_total }}</td>
-                <td>
-                    <a href="{% url 'eliminar-carrito' item.id %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Eliminar</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="d-flex justify-content-between align-items-center mt-3">
-        <h4><strong>Total:</strong> ${{ total }}</h4>
-        <a href="#" class="btn btn-success"><i class="bi bi-credit-card"></i> Pagar</a>
+<section class="portada detalle-cabecera">
+    <div class="container">
+        <span class="calendario-etiqueta"><i class="bi bi-cart"></i> Carrito</span>
+        <h1 class="catalogo-titulo">Tu carrito</h1>
+        <p class="catalogo-texto">Revisa tus actividades y la cantidad de personas antes de pagar.</p>
     </div>
-    {% else %}
-        <p>No hay actividades en el carrito.</p>
-        <a href="{% url 'lista-actividades' %}" class="btn btn-primary">Ver catálogo</a>
-    {% endif %}
+</section>
+<section class="detalle-cuerpo">
+    <div class="container">
+        {% if items %}
+        <div class="row g-4">
+            <div class="col-lg-8">
+                {% for item in items %}
+                <div class="carrito-item">
+                    {% if item.actividad.imagen %}<img src="{{ item.actividad.imagen.url }}" class="carrito-foto" alt="">{% else %}<img src="{% static 'sitio/img/morro.jpg' %}" class="carrito-foto" alt="">{% endif %}
+                    <div class="carrito-info">
+                        <h5>{{ item.actividad.titulo }}</h5>
+                        <small class="text-muted d-block mb-2"><i class="bi bi-calendar-event"></i> {{ item.actividad.fecha }} · ${{ item.actividad.precio }} por persona</small>
+                        <div class="carrito-stepper">
+                            <a href="{% url 'disminuir-carrito' item.id %}" class="{% if item.cantidad <= 1 %}disabled{% endif %}"><i class="bi bi-dash"></i></a>
+                            <span>{{ item.cantidad }}</span>
+                            <a href="{% url 'incrementar-carrito' item.id %}" class="{% if item.cantidad >= item.actividad.cupo_maximo %}disabled{% endif %}"><i class="bi bi-plus"></i></a>
+                        </div>
+                        <small class="text-muted ms-2">personas</small>
+                    </div>
+                    <div class="carrito-sub">${{ item.sub_total }}</div>
+                    <a href="{% url 'eliminar-carrito' item.id %}" class="carrito-borrar" title="Eliminar"><i class="bi bi-trash3"></i></a>
+                </div>
+                {% endfor %}
+                <a href="{% url 'lista-actividades' %}" class="detalle-volver"><i class="bi bi-arrow-left"></i> Seguir explorando actividades</a>
+            </div>
+            <div class="col-lg-4">
+                <div class="detalle-card carrito-resumen">
+                    <h5 class="fw-bold mb-3">Resumen del pedido</h5>
+                    {% for item in items %}
+                        <div class="carrito-linea"><span>{{ item.actividad.titulo }} × {{ item.cantidad }}</span><span>${{ item.sub_total }}</span></div>
+                    {% endfor %}
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <strong>Total</strong><span class="act-precio">${{ total }}</span>
+                    </div>
+                    <a href="{% url 'pagar' %}" class="btn btn-ver w-100"><i class="bi bi-credit-card"></i> Ir a pagar</a>
+                    <small class="text-muted d-block text-center mt-2"><i class="bi bi-shield-check"></i> Pago seguro con Webpay</small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+            <p class="text-muted">No hay actividades en el carrito.</p>
+            <a href="{% url 'lista-actividades' %}" class="btn btn-ver">Ver catálogo</a>
+        {% endif %}
+    </div>
 </section>
 {% endblock content %}

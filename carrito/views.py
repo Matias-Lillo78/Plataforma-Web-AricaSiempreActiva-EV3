@@ -1,8 +1,10 @@
+import random
+from datetime import date
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from catalogo.models import Actividad
-from .models import Carrito, ItemCarrito
+from .models import Carrito, ItemCarrito, Inscripcion, Pago
 
 def _carrito_del_usuario(request):
     carrito, _ = Carrito.objects.get_or_create(usuario=request.user.perfil)
@@ -17,6 +19,19 @@ def ver_carrito(request):
     return render(request, 'carrito/ver_carrito.html', {
         'items': carrito.items.all(),
         'total': carrito.total(),
+    })
+
+@login_required
+def mis_inscripciones(request):
+    # historial de lo que el turista ya pago, de la mas nueva a la mas antigua
+    inscripciones = Inscripcion.objects.filter(turista=request.user.perfil).order_by('-id')
+    total = 0
+    for i in inscripciones:
+        total += i.pago.monto
+    return render(request, 'carrito/mis_inscripciones.html', {
+        'inscripciones': inscripciones,
+        'total': total,
+        'hoy': date.today(),
     })
 
 @login_required
@@ -62,3 +77,43 @@ def eliminar_item(request, id):
     item = _item_del_usuario(request, id)
     item.delete()
     return redirect('ver-carrito')
+
+@login_required
+def pagar(request):
+    carrito = _carrito_del_usuario(request)
+    items = list(carrito.items.all())
+    if not items:
+        return redirect('ver-carrito')
+    total = carrito.total()
+
+    if request.method == 'POST':
+        resultado = request.POST.get('resultado')  # 'Aprobado' o 'Rechazado' (pago simulado)
+
+        if resultado == 'Rechazado':
+            # no se cobra nada y el carrito queda igual para reintentar
+            return render(request, 'carrito/resultado_pago.html', {'aprobado': False, 'total': total})
+
+        # revisar que sigan quedando cupos antes de pagar
+        for item in items:
+            if item.cantidad > item.actividad.cupo_maximo:
+                messages.error(request, f'No quedan cupos suficientes en {item.actividad}')
+                return redirect('ver-carrito')
+
+        codigo = f'TRX-{random.randint(100000, 999999)}'  # codigo de transaccion simulado
+        for item in items:
+            inscripcion = Inscripcion.objects.create(
+                turista=request.user.perfil,
+                actividad=item.actividad,
+                cantidad=item.cantidad,
+                estado='Confirmada',
+            )
+            Pago.objects.create(inscripcion=inscripcion, monto=item.sub_total(), estado='Aprobado', codigo_transaccion=codigo)
+            item.actividad.cupo_maximo -= item.cantidad  # descontar cupos
+            item.actividad.save()
+
+        carrito.items.all().delete()  # vaciar el carrito
+        return render(request, 'carrito/resultado_pago.html', {
+            'aprobado': True, 'items': items, 'total': total, 'codigo': codigo,
+        })
+
+    return render(request, 'carrito/pagar.html', {'items': items, 'total': total})

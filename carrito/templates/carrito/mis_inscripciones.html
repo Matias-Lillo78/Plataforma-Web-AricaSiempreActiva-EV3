@@ -1,0 +1,37 @@
+{% extends 'sitio/base.html' %}
+{% load static %}
+{% block content %}
+<section class="insc-contenedor">
+    <div class="container">
+        <div class="insc-titulo">
+            <h1 class="catalogo-titulo">Mis inscripciones</h1>
+            <p class="catalogo-texto mb-0">Historial de las actividades que has pagado.</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4"><div class="insc-dato"><span class="ic acceso-icono icono-coral"><i class="bi bi-cash-coin"></i></span><div><small class="text-muted">Total pagado</small><strong>${{ total }}</strong></div></div></div>
+            <div class="col-md-4"><div class="insc-dato"><span class="ic acceso-icono icono-amarillo"><i class="bi bi-ticket-perforated"></i></span><div><small class="text-muted">Inscripciones</small><strong>{{ inscripciones|length }}</strong></div></div></div>
+            <div class="col-md-4"><div class="insc-dato"><span class="ic acceso-icono icono-azul"><i class="bi bi-calendar-check"></i></span><div><small class="text-muted">Última compra</small><strong class="fs-6">{{ inscripciones.0.fecha|default:"—" }}</strong></div></div></div>
+        </div>
+        <div class="insc-tabla">
+            <table class="table">
+                <thead><tr><th>Actividad</th><th>Fecha actividad</th><th class="text-center">Personas</th><th>Transacción</th><th class="text-end">Pagado</th><th class="text-center">Estado</th></tr></thead>
+                <tbody>
+                {% for i in inscripciones %}
+                <tr>
+                    <td><div class="d-flex align-items-center">
+                        {% if i.actividad.imagen %}<img src="{{ i.actividad.imagen.url }}" class="insc-foto" alt="">{% else %}<img src="{% static 'sitio/img/morro.jpg' %}" class="insc-foto" alt="">{% endif %}
+                        <div><a href="{% url 'detalle-actividad' i.actividad.id %}" class="fw-bold text-reset text-decoration-none">{{ i.actividad.titulo }}</a><br><small class="text-muted">Comprado el {{ i.fecha }}</small></div>
+                    </div></td>
+                    <td>{{ i.actividad.fecha }}</td>
+                    <td class="text-center">{{ i.cantidad }}</td>
+                    <td class="font-monospace small">{{ i.pago.codigo_transaccion }}</td>
+                    <td class="text-end fw-bold">${{ i.pago.monto }}</td>
+                    <td class="text-center">{% if i.actividad.fecha < hoy %}<span class="insc-badge insc-realizada">Realizada</span>{% else %}<span class="insc-badge insc-proxima">Próxima</span>{% endif %}</td>
+                </tr>
+                {% empty %}<tr><td colspan="6" class="text-muted">Aún no tienes inscripciones.</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock content %}

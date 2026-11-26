@@ -2,50 +2,122 @@
 
 {% block content %}
 <section class="container py-5">
-    <h1>Mis actividades</h1>
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <p class="text-uppercase text-muted fw-bold small mb-1">{{ gremio.nombre_empresa }}</p>
+            <h1 class="mb-1">Mis actividades</h1>
+            <p class="text-muted mb-0">Publica experiencias y revisa los participantes de cada actividad.</p>
+        </div>
+        {% if gremio.verificado %}
+            <a href="{% url 'crear-actividad' %}" class="btn btn-primary"><i class="bi bi-plus"></i> Nueva actividad</a>
+        {% endif %}
+    </div>
 
     {% if gremio.verificado %}
-        <a href="{% url 'crear-actividad' %}" class="btn btn-primary mb-3"><i class="bi bi-plus"></i> Nueva actividad</a>
-    {% elif pendiente %}
+    {% elif certificacion.estado_solicitud == 'Pendiente' %}
         <div class="alert alert-info">Tu solicitud de verificación está pendiente. El administrador la revisará pronto.</div>
+    {% elif certificacion.estado_solicitud == 'Observada' %}
+        <div class="alert alert-warning">
+            <strong>El administrador pidió revisar tus documentos:</strong> {{ certificacion.mensaje_admin }}
+            <a href="{% url 'solicitar-certificacion' %}" class="btn btn-warning btn-sm ms-2">Corregir documentos</a>
+        </div>
     {% else %}
         <div class="alert alert-warning">
+            {% if certificacion.estado_solicitud == 'Rechazada' %}
+                <p><strong>Tu solicitud fue rechazada:</strong> {{ certificacion.mensaje_admin }}</p>
+            {% endif %}
             <p>Tu gremio aún no está verificado. Solicita la verificación para poder publicar.</p>
-            <form method="post" action="{% url 'solicitar-certificacion' %}" class="d-flex gap-2">
-                {% csrf_token %}
-                <input type="text" name="antecedentes" class="form-control" placeholder="Antecedentes (RUT empresa, años de experiencia...)">
-                <button class="btn btn-primary text-nowrap">Solicitar verificación</button>
-            </form>
+            <a href="{% url 'solicitar-certificacion' %}" class="btn btn-primary">Solicitar verificación</a>
         </div>
     {% endif %}
 
-    <table class="table align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Título</th>
-                <th>Fecha</th>
-                <th>Precio</th>
-                <th>Cupos</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for actividad in actividades %}
-            <tr>
-                <td>{{ actividad.titulo }}</td>
-                <td>{{ actividad.fecha }}</td>
-                <td>${{ actividad.precio }}</td>
-                <td>{{ actividad.cupo_maximo }}</td>
-                <td>
-                    <a href="{% url 'detalle-actividad' actividad.id %}" class="btn btn-info btn-sm">Ver</a>
-                    <a href="{% url 'editar-actividad' actividad.id %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'eliminar-actividad' actividad.id %}" class="btn btn-danger btn-sm">Eliminar</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5">Aún no publicas actividades.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-0">Actividades</h4>
+                    <p class="text-muted small">{{ actividades|length }} actividad(es) · toca una para ver sus participantes</p>
+
+                    {% for a in actividades %}
+                    <div class="mis-act-item {% if a.id == elegida.id %}mis-act-elegida{% endif %}">
+                        <a href="?actividad={{ a.id }}" class="d-flex gap-3 align-items-center text-decoration-none text-dark">
+                            {% if a.imagen %}
+                                <img src="{{ a.imagen.url }}" class="mis-act-foto" alt="{{ a.titulo }}">
+                            {% else %}
+                                <div class="mis-act-foto bg-light"></div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <strong>{{ a.titulo }}</strong><br>
+                                <small class="text-muted">{{ a.fecha }} · {{ a.inscritos|default:0 }} inscritos · {{ a.cupo_maximo }} cupos libres</small>
+                            </div>
+                            <span class="badge rounded-pill etiqueta-verde">{{ a.estado }}</span>
+                        </a>
+                        <!-- opciones de siempre -->
+                        <div class="d-flex gap-2 mt-2 justify-content-end">
+                            <a href="{% url 'detalle-actividad' a.id %}" class="btn btn-info btn-sm">Ver</a>
+                            <a href="{% url 'editar-actividad' a.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'eliminar-actividad' a.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>Aún no publicas actividades.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-0">Participantes</h4>
+                    {% if elegida %}
+                        <p class="text-muted small">{{ elegida.titulo }} · {{ elegida.fecha }}</p>
+
+                        <div class="d-flex gap-3 mb-3">
+                            <div class="border rounded px-3 py-2"><small class="text-muted">Personas</small><br><strong>{{ elegida.inscritos|default:0 }}</strong></div>
+                            <div class="border rounded px-3 py-2"><small class="text-muted">Recaudado</small><br><strong class="text-success">${{ recaudado }}</strong></div>
+                        </div>
+
+                        <table class="table align-middle">
+                            <thead>
+                                <tr class="small text-uppercase text-muted">
+                                    <th>Participante</th>
+                                    <th>Personas</th>
+                                    <th>Transacción</th>
+                                    <th>Estado de pago</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in participantes %}
+                                <tr>
+                                    <td>
+                                        {% with u=i.turista.usuario %}
+                                            <!-- iniciales del nombre y apellido (o la primera letra del usuario) -->
+                                            <span class="mis-act-avatar">{% if u.first_name %}{{ u.first_name|first }}{{ u.last_name|first }}{% else %}{{ u.username|first|upper }}{% endif %}</span>
+                                            {{ u.get_full_name|default:u.username }}
+                                        {% endwith %}
+                                    </td>
+                                    <td>{{ i.cantidad }}</td>
+                                    <td class="font-monospace small">{{ i.pago.codigo_transaccion }}</td>
+                                    <td>
+                                        {% if i.pago.estado == 'Aprobado' %}
+                                            <span class="badge rounded-pill etiqueta-verde">● Aprobado</span>
+                                        {% else %}
+                                            <span class="badge rounded-pill etiqueta-gris">● {{ i.pago.estado }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="4" class="text-muted">Aún no hay inscritos en esta actividad.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">Crea una actividad para ver aquí a sus participantes.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 {% endblock content %}
