@@ -1,0 +1,54 @@
+{% extends 'sitio/base.html' %}
+
+{% block content %}
+<section class="container py-5">
+    <p class="text-uppercase text-muted fw-bold mb-1">{{ gremio.nombre_empresa }}</p>
+    <h1>Estadísticas de mis actividades</h1>
+    <p class="text-muted mb-4">Participación, ingresos y opiniones de tus actividades.</p>
+
+    
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card card-body shadow-sm">
+                <small class="text-muted">Actividades publicadas</small>
+                <h2 class="mb-0">{{ total_actividades }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-body shadow-sm">
+                <small class="text-muted">Personas inscritas</small>
+                <h2 class="mb-0 text-primary">{{ personas }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-body shadow-sm">
+                <small class="text-muted">Ingresos (pagos aprobados)</small>
+                <h2 class="mb-0 text-success">${{ ingresos }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-body shadow-sm">
+                <small class="text-muted">Valoración promedio</small>
+                <h2 class="mb-0 text-warning">{% if promedio %}{{ promedio|floatformat:1 }} ★{% else %}—{% endif %}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-body shadow-sm">
+        <h4>Inscritos por actividad</h4>
+        {% for a in actividades %}
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <span>{{ a.titulo }}</span>
+                    <span><strong>{{ a.personas|default:0 }}</strong> personas · ${{ a.ingresos|default:0 }} · quedan {{ a.cupo_maximo }} cupos</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {% widthratio a.personas|default:0 personas 100 %}%"></div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Aún no publicas actividades.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock content %}
