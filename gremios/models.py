@@ -1,5 +1,13 @@
+from django import forms
 from django.db import models
 from registro.models import Perfil, Administrador
+
+
+def validar_pdf(archivo):
+    if not archivo.name.lower().endswith('.pdf'):
+        raise forms.ValidationError('Solo se aceptan archivos PDF')
+    if archivo.size > 2 * 1024 * 1024:
+        raise forms.ValidationError('El archivo no puede pesar más de 2 MB')
 
 # Create your models here.
 class Gremio(models.Model):
@@ -26,9 +34,20 @@ class Certificacion(models.Model):
     periodo_vigencia = models.PositiveIntegerField(default=12) 
     estado_vigencia = models.CharField(max_length=20, blank=True)
     antecedentes = models.CharField(max_length=255, blank=True)
+    mensaje_admin = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f"{self.gremio} - {self.estado_solicitud}"
+
+
+class Documento(models.Model):
+    certificacion = models.ForeignKey(Certificacion, on_delete=models.CASCADE, related_name='documentos')
+    nombre = models.CharField(max_length=100)
+    archivo = models.FileField(upload_to='documentos', validators=[validar_pdf])
+    fecha = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.nombre
 
 class HistorialDecision(models.Model):
     administrador = models.ForeignKey(Administrador, on_delete=models.CASCADE)  
