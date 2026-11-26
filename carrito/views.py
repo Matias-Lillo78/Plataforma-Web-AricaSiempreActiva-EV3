@@ -23,7 +23,7 @@ def ver_carrito(request):
 
 @login_required
 def mis_inscripciones(request):
-    # historial de lo que el turista ya pago, de la mas nueva a la mas antigua
+    
     inscripciones = Inscripcion.objects.filter(turista=request.user.perfil).order_by('-id')
     total = 0
     for i in inscripciones:
@@ -87,19 +87,19 @@ def pagar(request):
     total = carrito.total()
 
     if request.method == 'POST':
-        resultado = request.POST.get('resultado')  # 'Aprobado' o 'Rechazado' (pago simulado)
+        resultado = request.POST.get('resultado')  
 
         if resultado == 'Rechazado':
-            # no se cobra nada y el carrito queda igual para reintentar
+            
             return render(request, 'carrito/resultado_pago.html', {'aprobado': False, 'total': total})
 
-        # revisar que sigan quedando cupos antes de pagar
+        
         for item in items:
             if item.cantidad > item.actividad.cupo_maximo:
                 messages.error(request, f'No quedan cupos suficientes en {item.actividad}')
                 return redirect('ver-carrito')
 
-        codigo = f'TRX-{random.randint(100000, 999999)}'  # codigo de transaccion simulado
+        codigo = f'TRX-{random.randint(100000, 999999)}'  
         for item in items:
             inscripcion = Inscripcion.objects.create(
                 turista=request.user.perfil,
@@ -108,10 +108,10 @@ def pagar(request):
                 estado='Confirmada',
             )
             Pago.objects.create(inscripcion=inscripcion, monto=item.sub_total(), estado='Aprobado', codigo_transaccion=codigo)
-            item.actividad.cupo_maximo -= item.cantidad  # descontar cupos
+            item.actividad.cupo_maximo -= item.cantidad 
             item.actividad.save()
 
-        carrito.items.all().delete()  # vaciar el carrito
+        carrito.items.all().delete()  
         return render(request, 'carrito/resultado_pago.html', {
             'aprobado': True, 'items': items, 'total': total, 'codigo': codigo,
         })
